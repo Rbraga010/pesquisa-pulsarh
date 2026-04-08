@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/survey", "destination": "/api/survey" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
