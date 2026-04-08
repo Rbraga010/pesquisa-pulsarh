@@ -22,6 +22,12 @@ const globalStyles = `
     -webkit-text-fill-color: transparent;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 640px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-kpi { grid-template-columns: repeat(2, 1fr); }
+  }
 `
 
 // ─── Questions Definition ────────────────────────────────────────────────────
@@ -253,8 +259,8 @@ function HBar({ items, color = '#C5A572' }: { items: RankItem[]; color?: string 
       {items.map(item => (
         <div key={item.label}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-            <span style={{ fontSize: 13, color: '#4B5563', fontWeight: 500 }}>{item.label}</span>
-            <span style={{ fontSize: 12, color: '#9CA3AF', fontWeight: 600 }}>{item.count} ({item.pct}%)</span>
+            <span style={{ fontSize: 12, color: '#4B5563', fontWeight: 500, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{item.label}</span>
+            <span style={{ fontSize: 11, color: '#9CA3AF', fontWeight: 600, flexShrink: 0 }}>{item.count} ({item.pct}%)</span>
           </div>
           <div style={{ height: 8, borderRadius: 4, background: '#F3F4F6' }}>
             <div style={{ height: '100%', borderRadius: 4, background: color, width: `${(item.pct / max) * 100}%`, transition: 'width 0.8s ease', minWidth: item.pct > 0 ? 8 : 0 }} />
@@ -267,8 +273,8 @@ function HBar({ items, color = '#C5A572' }: { items: RankItem[]; color?: string 
 
 function DashSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #E5E7EB', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-      <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1A1A2E', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #F3F4F6' }}>{title}</h3>
+    <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #E5E7EB', padding: 'clamp(16px, 4vw, 24px)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+      <h3 style={{ fontSize: 13, fontWeight: 700, color: '#1A1A2E', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #F3F4F6' }}>{title}</h3>
       {children}
     </div>
   )
@@ -310,7 +316,7 @@ function ResultsDashboard() {
   const a = data.analytics
 
   return (
-    <div className="animate-in" style={{ maxWidth: 900, margin: '0 auto', padding: '2rem 1.5rem 4rem' }}>
+    <div className="animate-in" style={{ maxWidth: 900, margin: '0 auto', padding: 'clamp(1rem, 3vw, 2rem) clamp(0.75rem, 3vw, 1.5rem) 4rem' }}>
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 16px', borderRadius: 999, background: '#C5A572', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase' as const, marginBottom: 16 }}>Resultados Confidenciais</div>
@@ -325,7 +331,7 @@ function ResultsDashboard() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* Big number */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
+          <div className="grid-kpi">
             {[
               { label: 'Respondentes', value: a.total, color: '#C5A572' },
               { label: 'Top Cargo', value: a.cargo[0]?.label?.split(' / ')[0] || '—', color: '#6B2D8B' },
@@ -341,7 +347,7 @@ function ResultsDashboard() {
 
           {/* Block 1: Perfil */}
           <DashSection title="Bloco 1 — Perfil dos Lideres">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+            <div className="grid-2">
               <div><p style={{ fontSize: 12, color: '#C5A572', fontWeight: 600, marginBottom: 10 }}>Cargo</p><HBar items={a.cargo} color="#6B2D8B" /></div>
               <div><p style={{ fontSize: 12, color: '#C5A572', fontWeight: 600, marginBottom: 10 }}>Setor</p><HBar items={a.setor} color="#3B82F6" /></div>
               <div><p style={{ fontSize: 12, color: '#C5A572', fontWeight: 600, marginBottom: 10 }}>Tamanho da Equipe</p><HBar items={a.equipe} color="#10B981" /></div>
@@ -373,7 +379,7 @@ function ResultsDashboard() {
 
           {/* Block 3: IA */}
           <DashSection title="Bloco 3 — Relacao com IA">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+            <div className="grid-2">
               <div><p style={{ fontSize: 12, color: '#C5A572', fontWeight: 600, marginBottom: 10 }}>Fluencia em IA</p><HBar items={a.fluencia_ia} color="#8B5CF6" /></div>
               <div><p style={{ fontSize: 12, color: '#C5A572', fontWeight: 600, marginBottom: 10 }}>IA na Gestao</p><HBar items={a.ia_gestao} color="#3B82F6" /></div>
             </div>
